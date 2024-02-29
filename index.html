@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Rainblur Landing Page Template: Tailwind Toolbox</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />
+    <!--Replace with your tailwind.css once created-->
+    <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+
+        html {
+            font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+    </style>
+</head>
+
+<body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed"
+    style="background-image: url('header.png');">
+    <div class="h-full overflow-y-auto"> <!-- Cambio realizado: añadir la clase overflow-y-auto -->
+        <!--Nav-->
+        <div class="w-full container mx-auto">
+            <div class="w-full flex items-center justify-between">
+                <a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
+                    href="#">
+                    Bilico<span
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Finder</span>
+                </a>
+
+            </div>
+        </div>
+
+        <!--Main-->
+        <div class="container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+            <!--Left Col-->
+            <div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
+                <h1
+                    class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
+                    Ajax
+                    <span
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">
+                        es una completa basura </span>
+                    y JavaScript da asco!
+                </h1>
+
+                <form class="bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                    <div class="mb-4">
+                        <label class="block text-3xl py-2 font-bold mb-2" for="summonerName">
+                            Introduce los datos del invocador </label>
+                        <input
+                            class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                            id="nickname" type="text" placeholder="Nombre de invocador" />
+                    </div>
+                    Server: <select name="servers" id="server" class="form-select">
+                        <option value="Seleccionar">Seleccionar</option>
+                        <option value="VN2">VN2</option>
+                        <option value="TW2">TW2</option>
+                        <option value="TR1">TR1</option>
+                        <option value="TH2">TH2</option>
+                        <option value="SG2">SG2</option>
+                        <option value="RU">RU</option>
+                        <option value="PH2">PH2</option>
+                        <option value="OC1">OC1</option>
+                        <option value="NA1">NA1</option>
+                        <option value="LA2">LA2</option>
+                        <option value="LA1">LA1</option>
+                        <option value="KR">KR</option>
+                        <option value="JP1">JP1</option>
+                        <option value="EUW1">EUW1</option>
+                        <option value="EUN1">EUN1</option>
+                        <option value="BR1">BR1</option>
+                    </select>
+                    <div class="flex items-center justify-between pt-4">
+                        <button
+                            class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                            type="button" onclick="buscarSummoner()">
+                            Buscar </button>
+                    </div>
+                </form>
+            </div>
+
+            <!--Right Col-->
+            <div class="mx-auto md:pt-16">
+                <table class="hover:table-fixed border border-collapse border-gray-700 ml-2" style="margin-top: 90px;">
+                    <tr class="bg-gray-900">
+                        <th class="border border-gray-700 text-white py-2 px-4">Tipo de Datos</th>
+                        <th class="border border-gray-700 text-white py-2 px-4">Resultado</th>
+                    </tr>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        var tableBody = document.getElementById("tableBody"); // Get the table body element
+
+        // Function to send request with nickname
+        function buscarSummoner() {
+            var nickname = document.getElementById("nickname").value; // Get the nickname
+            var server = document.getElementById("server").value; // Get the server
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    var responseData = JSON.parse(xhttp.responseText); // Parse the JSON response
+                    populateTable(responseData); // Call function to populate the table
+                }
+            };
+            xhttp.open("GET", "https://" + server.toLowerCase() + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + nickname + "?api_key=RGAPI-f6837d12-47cd-45b7-a73c-e04bcf1f820f", true);
+            xhttp.send();
+        }
+
+        // Function to populate the table with API response data
+        function populateTable(responseData) {
+            tableBody.innerHTML = ""; // Clear previous table data
+            for (var key in responseData) {
+                var row = document.createElement("tr"); // Create a new row
+                var cell1 = document.createElement("td"); // Create the first cell for Name
+                var cell2 = document.createElement("td"); // Create the second cell for Data Type
+
+                // Añadir las clases de estilo a las celdas
+                cell1.className = "border border-gray-700 text-white bg-gray-900";
+                cell2.className = "border border-gray-700 text-white bg-gray-900";
+
+                cell1.textContent = key; // Set the Name
+                cell2.textContent = responseData[key]; // Set the Value
+
+                row.appendChild(cell1); // Append cell1 to the row
+                row.appendChild(cell2); // Append cell4 to the row
+
+                tableBody.appendChild(row); // Append the row to the table body
+            }
+        }
+
+        // Function to get the Description based on the key (Name)
+        function getDescription(key) {
+            var descriptions = {
+                accountId: "Encrypted account ID. Max length 56 characters.",
+                profileIconId: "ID of the summoner icon associated with the summoner.",
+                revisionDate: "Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.",
+                name: "Summoner name.",
+                id: "Encrypted summoner ID. Max length 63 characters.",
+                puuid: "Encrypted PUUID. Exact length of 78 characters.",
+                summonerLevel: "Summoner level associated with the summoner."
+            };
+            return descriptions[key] || "No description available";
+        }
+    </script>
+</body>
+
+</html>
